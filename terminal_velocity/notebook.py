@@ -53,56 +53,20 @@ Other modules could provide better search functions that could be plugged in.
 
 """
 import logging
-logger = logging.getLogger(__name__)
 import os
 import sys
 
 import chardet
 
+logger = logging.getLogger(__name__)
 
-def unicode_or_bust(raw_text):
-    """Return the given raw text data decoded to unicode.
 
-    If the text cannot be decoded, return None.
-
-    """
-    encodings = ["utf-8"]
-    for encoding in (sys.getfilesystemencoding(), sys.getdefaultencoding()):
-        # I would use a set for this, but they don't maintain order.
-        if encoding not in encodings:
-            encodings.append(encoding)
-
-    for encoding in encodings:
-        if encoding:  # getfilesystemencoding() may return None
-            try:
-                decoded = unicode(raw_text, encoding=encoding)
-                return decoded
-            except UnicodeDecodeError:
-                pass
-
-    # If none of those guesses worked, let chardet have a go.
-    encoding = chardet.detect(raw_text)["encoding"]
-    if encoding and encoding not in encodings:
-        try:
-            decoded = unicode(raw_text, encoding=encoding)
-            logger.debug("File decoded with chardet, encoding was {0}".format(
-                encoding))
-            return decoded
-        except UnicodeDecodeError:
-            pass
-        except LookupError:
-            pass
-
-    # I've heard that decoding with cp1252 never fails, so try that last.
-    try:
-        decoded = unicode(raw_text, encoding="cp1252")
-        logger.debug("File decoded with encoding cp1252")
-        return decoded
-    except UnicodeDecodeError:
-        pass
-
-    # If nothing worked then give up.
-    return None
+def read_file(path):
+    detection = chardet.detect(open(path, "rb").read())
+    encoding = detection["encoding"] or "utf-8"
+    errors = "surrogateescape"
+    with open(path, encoding=encoding, errors=errors) as f:
+        return f.read()
 
 
 class Error(Exception):
@@ -217,13 +181,13 @@ class PlainTextNote(object):
 
     @property
     def contents(self):
-        contents = unicode_or_bust(open(self.abspath, "r").read())
-        if contents is None:
+        try: 
+            return read_file(self.abspath)
+        except UnicodeDecodeError:
             logger.error(
-                u"Could not decode file contents: {0}".format(self.abspath))
-            return u""
-        else:
-            return contents
+                "Could not decode file contents: {0}".format(self.abspath)
+            )
+            return ""
 
     @property
     def mtime(self):
@@ -358,7 +322,7 @@ class PlainTextNoteBook(object):
                 abspath = os.path.join(root, filename)
                 relpath = os.path.relpath(abspath, self.path)
                 relpath, ext = os.path.splitext(relpath)
-                unicode_relpath = unicode_or_bust(relpath)
+                unicode_relpath = relpath
                 if relpath is None:
                     # The filename could not be decoded.
                     logger.error(

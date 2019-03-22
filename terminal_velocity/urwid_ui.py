@@ -11,7 +11,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import urwid
-import notebook
+from . import notebook
 
 
 palette = [
@@ -28,8 +28,6 @@ def system(cmd, loop):
 
     loop.screen.stop()
 
-    cmd = u"{0}".format(cmd)
-    cmd = cmd.encode(sys.getfilesystemencoding())  # FIXME: Correct encoding?
     safe_cmd = shlex.split(cmd)
 
     logger.debug("System command: {0}".format(safe_cmd))
