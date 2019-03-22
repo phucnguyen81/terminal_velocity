@@ -12,7 +12,7 @@ focuses on letting you create or find a note as quickly and easily as
 possible, then uses your `$EDITOR` to open and edit the note. It is
 heavily inspired by the OS X app [Notational
 Velocity](http://notational.net/). For screenshots and features, see the
-[Terminal Velocity website](https://github.com/terminal-velocity-notes/terminal_velocity).
+[Terminal Velocity website](https://github.com/vhp/terminal_velocity).
 
 ## Installation
 
@@ -53,9 +53,9 @@ apt install python-setuptools python-chardet python-urwid python-dev
 
 Clone the repository from:
 
-    git@github.com:terminal-velocity-notes/terminal_velocity.git
+    git@github.com:vhp/terminal_velocity.git
     or
-    https://github.com/terminal-velocity-notes/terminal_velocity.git
+    https://github.com/vhp/terminal_velocity.git
 
 Move into terminal_velocity directory you just cloned and run the following:
 
@@ -77,5 +77,5 @@ To release a new version of Terminal Velocity:
 For more information see <https://packaging.python.org/>.
 
 To contribute code to Terminal Velocity, see
-[CONTRIBUTING](https://github.com/terminal-velocity-notes/terminal_velocity/blob/master/CONTRIBUTING.md#contributing-to-terminal-velocity).
+[CONTRIBUTING](https://github.com/vhp/terminal_velocity/blob/master/CONTRIBUTING.md#contributing-to-terminal-velocity).
 
